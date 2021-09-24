@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+build/
+.gradletasknamecache
+.idea/
+*.iml
+.DS_Store
+helm/Chart.yaml
+values/local.values.yaml

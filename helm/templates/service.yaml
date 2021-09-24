@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "base-develop-environtment.fullname" . }}-service
+  labels:
+    {{- include "base-develop-environtment.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 22
+      protocol: TCP
+      name: ssh
+      {{- if .Values.service.type | eq "NodePort" }}
+      nodePort: {{ .Values.service.nodePort.port }}
+      {{- end }}
+  selector:
+    {{- include "base-develop-environtment.selectorLabels" . | nindent 4 }}

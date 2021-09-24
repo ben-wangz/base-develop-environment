@@ -1,0 +1,9 @@
+# ${doNotModifyComment}
+ssh:
+  authorized_keys: |-
+    ${HOME_PUBLIC_KEY}
+service:
+  type: ClusterIP
+  port: 22
+  nodePort:
+    port: 30022

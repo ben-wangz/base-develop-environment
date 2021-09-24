@@ -1,0 +1,112 @@
+import groovy.text.SimpleTemplateEngine
+
+buildscript {
+    repositories {
+        maven { url("https://maven.aliyun.com/repository/public") }
+        maven { url("https://maven.aliyun.com/repository/spring") }
+        maven { url("https://maven.aliyun.com/repository/mapr-public") }
+        maven { url("https://maven.aliyun.com/repository/spring-plugin") }
+        maven { url("https://maven.aliyun.com/repository/gradle-plugin") }
+        maven { url("https://maven.aliyun.com/repository/google") }
+        maven { url("https://maven.aliyun.com/repository/jcenter") }
+    }
+}
+plugins {
+    id "de.undercouch.download" version "4.1.1"
+}
+Map<String, String> envMap = new HashMap<>(System.getenv())
+def imageRepository = envMap.getOrDefault("IMAGE_REPOSITORY ", "wangz2019/base-develop-environment")
+ext {
+    simpleTemplateEngine = new SimpleTemplateEngine()
+    mainVersion = "1.0.0"
+    imageNameWithTag = "${imageRepository}:${ext.mainVersion}"
+}
+version = mainVersion
+def systemdVersion = "1.3.0-centos8.3.2011"
+File runtimeDockerDirectory = project.file("${project.buildDir}/runtime/docker")
+task buildDockerImage() {
+    doFirst {
+        runtimeDockerDirectory.parentFile.mkdirs()
+        runtimeDockerDirectory.delete()
+        copy {
+            from project.file("docker")
+            into runtimeDockerDirectory
+        }
+    }
+    doLast {
+        exec {
+            def execSpec = commandLine(
+                    "docker", "build", "--rm",
+                    "-f", project.file("${runtimeDockerDirectory.getAbsolutePath()}/Dockerfile"),
+                    "-t", project.ext.imageNameWithTag,
+                    "--build-arg", "SYSTEMD_VERSION=${systemdVersion}",
+                    runtimeDockerDirectory,
+            )
+            println("running command: ${String.join(" ", execSpec.getCommandLine())}")
+        }
+    }
+}
+
+task pushDockerImage() {
+    doLast {
+        exec {
+            def execSpec = commandLine(
+                    "docker", "buildx", "build",
+                    "--platform", "linux/amd64,linux/arm64",
+                    "--rm",
+                    "-f", project.file("${runtimeDockerDirectory.getAbsolutePath()}/Dockerfile"),
+                    "-t", project.ext.imageNameWithTag,
+                    "--build-arg", "SYSTEMD_VERSION=${systemdVersion}",
+                    "--push",
+                    runtimeDockerDirectory,
+            )
+            println("running command: ${String.join(" ", execSpec.getCommandLine())}")
+        }
+    }
+    dependsOn(buildDockerImage)
+}
+
+def containerName = "docker-systemd"
+def port = 1022
+task runDockerContainer(type: Exec) {
+    def keysDirectory = project.file("${project.buildDir}/runtime/keys")
+    doFirst {
+        keysDirectory.mkdirs()
+        copy {
+            from "${System.getenv("HOME")}/.ssh/id_rsa.pub"
+            into keysDirectory
+        }
+        println("running command: ${String.join(" ", getCommandLine())}")
+    }
+    executable("docker")
+    args(
+            "run", "--rm",
+            "-p", "${port}:22",
+            "--name", containerName,
+            "--privileged",
+            "-v", "${keysDirectory}/id_rsa.pub:/root/.ssh/authorized_keys:ro",
+            "-d", project.ext.imageNameWithTag,
+    )
+    doLast {
+        println("login with command: ssh -o \"UserKnownHostsFile /dev/null\" -p ${port} root@localhost")
+    }
+}
+
+task stopDockerContainer(type: Exec) {
+    executable("docker")
+    args(
+            "stop", containerName
+    )
+}
+
+private void downloadResource(String url, File targetFile) {
+    download {
+        src url
+        dest targetFile
+        tempAndMove true
+        overwrite false
+    }
+}
+
+apply from: project.file("helm.gradle")
+apply from: project.file("docs.nginx.gradle")
