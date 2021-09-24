@@ -63,7 +63,6 @@ task pushDockerImage() {
             println("running command: ${String.join(" ", execSpec.getCommandLine())}")
         }
     }
-    dependsOn(buildDockerImage)
 }
 
 def containerName = "docker-systemd"
