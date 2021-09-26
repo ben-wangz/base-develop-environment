@@ -32,6 +32,9 @@ spec:
           configMap:
             name: {{ include "base-develop-environtment.configmap.name" . }}
             defaultMode: 0600
+        - name: base-develop-environment-data-volume
+          persistentVolumeClaim:
+            claimName: {{ include "base-develop-environtment.fullname" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -43,22 +46,12 @@ spec:
               name: base-develop-environtment-config-volume
               subPath: authorized_keys
               readOnly: true
+            - mountPath: /data
+              name: base-develop-environment-data-volume
           livenessProbe:
-            exec:
-              command:
-                - "bash"
-                - "-c"
-                - "systemctl is-active sshd && systemctl is-active docker"
-            failureThreshold: 20
-            periodSeconds: 10
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            exec:
-              command:
-                - "bash"
-                - "-c"
-                - "systemctl is-active sshd && systemctl is-active docker"
-            failureThreshold: 20
-            periodSeconds: 10
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

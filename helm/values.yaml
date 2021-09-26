@@ -70,3 +70,21 @@ affinity: {}
 ssh:
   authorized_keys: |-
     #empty
+livenessProbe:
+  exec:
+    command:
+      - "bash"
+      - "-c"
+      - "systemctl is-active sshd"
+  failureThreshold: 20
+  periodSeconds: 10
+readinessProbe:
+  exec:
+    command:
+      - "bash"
+      - "-c"
+      - "systemctl is-active sshd"
+  failureThreshold: 20
+  periodSeconds: 10
+persistence:
+  storageClass: ""

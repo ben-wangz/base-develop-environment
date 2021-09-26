@@ -1,4 +1,8 @@
 # ${doNotModifyComment}
+image:
+  repository: ${IMAGE_REPOSITORY}
+  pullPolicy: IfNotPresent
+  tag: "${IMAGE_TAG}"
 ssh:
   authorized_keys: |-
     ${HOME_PUBLIC_KEY}
