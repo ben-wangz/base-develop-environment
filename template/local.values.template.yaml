@@ -6,8 +6,7 @@ image:
 ssh:
   authorized_keys: |-
     ${HOME_PUBLIC_KEY}
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC7PdouY50Z/s5M1cZpRVZbGWiyIIMOxpkYemUMSGKzGI7ezRd4KV5+wAJaUdzPZsRR6P1YM+P0hjCKvq03nBEexkgRhXmvMCFjDygjfdkosH1WzR2qK7hoXxNmcu95Cfa+1M6aGIAkhk+0J+HIllx+FYIgc0bUV1RKA1s+rPItjO7kvzWWbwtEOquDlEZeSzWxi4f0rjSVXhO07OCO+ZJ6Krljnh4nSPLjLPqemy7yvq/X9O7hKIZHFQihSUYkoK4M4Y5e4xCtoVvaYn21JgnVuk0B7+fwx4E0Fi7d/iBDqojMDV9iV/tj5u0R+crN/adox8xIboq+wsE7EIjIPQsC7JTxzqV/Vvbng5WWeXCQ/RSvYmLBIqSRkgPBLmWUekc+tjujpKqcfPPgDB7MSlnDYhkoPC0Ki1qyR0rwkaCLUMejgiAhYvx2D5TEDotg9K4C4zICvKSJuzy1t6M/fEVsMz3fgoAld9mNVWlj7Bz6k3VO0moTz7MLOCZsG6U6u4xyfikuERVoCt0v/lHn4HkJDvgAg9PtQkKVDTi7E/TXSpbgUWfs5vypxfBoPY847INQV5gzrsVXcJqKWlu5GqhnhG6myOYM+8zdWDklgEUPAZVtg8zJIl5E24Ul8vT0Rrz6CZwtdiJP0JO7Zalm0CemYEJJVLJkj5J/duuMJ3YHsQ== yangjuanjuan@zhejianglab.com
-    #end
+    # end of line
 
 service:
   type: ClusterIP
