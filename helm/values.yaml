@@ -70,6 +70,15 @@ affinity: {}
 ssh:
   authorized_keys: |-
     #empty
+bashrc: |-
+  alias rm='rm -i'
+  alias cp='cp -i'
+  alias mv='mv -i'
+  # Source global definitions
+  if [ -f /etc/bashrc ]; then
+          . /etc/bashrc
+  fi
+  TZ=Asia/Shanghai
 livenessProbe:
   exec:
     command:
@@ -88,3 +97,6 @@ readinessProbe:
   periodSeconds: 10
 persistence:
   storageClass: ""
+env:
+- name: TZ
+  value: "Asia/Shanghai"

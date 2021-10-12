@@ -40,11 +40,17 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             - mountPath: /root/.ssh/authorized_keys
               name: base-develop-environtment-config-volume
               subPath: authorized_keys
+              readOnly: true
+            - mountPath: /root/.bashrc
+              name: base-develop-environtment-config-volume
+              subPath: bashrc
               readOnly: true
             - mountPath: /data
               name: base-develop-environment-data-volume

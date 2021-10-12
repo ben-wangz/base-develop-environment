@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: {{ include "base-develop-environtment.configmap.name" . }}
 data:
+  bashrc: {{ toYaml .Values.bashrc | nindent 4 }}
   authorized_keys: {{ toYaml .Values.ssh.authorized_keys | nindent 4 }}
